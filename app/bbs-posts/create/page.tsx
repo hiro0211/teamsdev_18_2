@@ -59,15 +59,16 @@ const CreateBBSPage = () => {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-1/2 px-7 mx-auto">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full sm:w-3/4 lg:w-1/2 p-4 sm:p-6 mx-auto">
+            <h2 className='text-2xl font-bold text-center sm:hidden'>Create Blog</h2>
                 <FormField
                     control={form.control}
                     name="title"
                     render={({ field }) => (
-                        <FormItem className='flex items-center gap-2'>
-                            <FormLabel className='text-2xl font-bold '>Title</FormLabel>
-                            <FormControl>
-                                <Input placeholder="タイトルを入力" {...field} />
+                        <FormItem className='flex flex-col sm:flex-row items-start sm:items-center gap-2'>
+                            <FormLabel className='text-xl sm:text-2xl font-bold'>Title</FormLabel>
+                            <FormControl className='w-full '>
+                                <Input placeholder="タイトルを入力" className="focus-visible:ring-0 " {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -79,7 +80,7 @@ const CreateBBSPage = () => {
                     render={({ field }) => (
                         <FormItem >
                             <FormControl>
-                                <Card className='border-dashed border-gray-400'>
+                                <Card className='border-dashed border-gray-400 w-full'>
                                     {image?(
                                         <div>
                                             <img src={image} alt="Preview" />
@@ -143,7 +144,7 @@ const CreateBBSPage = () => {
                         <FormItem>
                             <FormControl>
                                 <Textarea placeholder="ブログ本文を入力"
-                                className='bg-gray-100 shadow-md'
+                                className='bg-gray-100 shadow-md w-full focus-visible:ring-0'
                                 {...field} />
                             </FormControl>
                             <FormMessage />
