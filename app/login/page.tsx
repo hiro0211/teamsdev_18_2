@@ -7,10 +7,13 @@ export default function Login() {
       <main className="w-full px-4">
         <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
           <h1 className="text-2xl font-semibold text-center mb-8">Sign In</h1>
-          
+
           <form className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-bold text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-bold text-gray-700"
+              >
                 Email
               </label>
               <input
@@ -22,7 +25,10 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-bold text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-bold text-gray-700"
+              >
                 Password
               </label>
               <input
@@ -44,7 +50,7 @@ export default function Login() {
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/signup" className="text-blue-500 hover:text-blue-600">
               Sign up
             </Link>
@@ -53,4 +59,4 @@ export default function Login() {
       </main>
     </div>
   );
-};
+}
