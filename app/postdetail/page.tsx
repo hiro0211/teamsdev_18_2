@@ -3,7 +3,7 @@ import Header from '../Header';
 
 export default function Page() {
     return (
-    <div>
+    <>
         <Header/>
         <main>
             {/* Blog Section */}
@@ -88,6 +88,6 @@ export default function Page() {
             </div>
 
         </main>
-    </div>
+    </>
     );
 }
