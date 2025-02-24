@@ -10,10 +10,7 @@ export default function Login() {
 
           <form className="space-y-6">
             <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="block text-sm font-bold text-gray-700"
-              >
+              <label htmlFor="email" className="block text-sm font-bold text-gray-700">
                 Email
               </label>
               <input
@@ -25,10 +22,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="block text-sm font-bold text-gray-700"
-              >
+              <label htmlFor="password" className="block text-sm font-bold text-gray-700">
                 Password
               </label>
               <input
