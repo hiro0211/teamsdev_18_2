@@ -6,7 +6,7 @@ export default function SignUp() {
       <main className="w-full px-4">
         <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
           <h1 className="text-2xl font-semibold text-center mb-8">Sign Up</h1>
-          
+
           <form className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="name" className="block text-sm font-bold text-gray-700">
@@ -64,4 +64,4 @@ export default function SignUp() {
       </main>
     </div>
   );
-};
+}

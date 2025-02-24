@@ -10,3 +10,5 @@ tsconfig.json
 next.config.mjs
 .eslintrc.json
 .prettierrc
+components.json
+components/ui/*
