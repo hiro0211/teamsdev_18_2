@@ -3,11 +3,11 @@
 import { useState } from "react";
 
 interface Props {
-    posts: number;
-    itemsPerPage?: number;
-  }
+  posts: number;
+  itemsPerPage?: number;
+}
 
-const Pagination = ({ posts, itemsPerPage = 3 }:Props) => {
+const Pagination = ({ posts, itemsPerPage = 3 }: Props) => {
   const totalPages = Math.max(1, Math.ceil(posts / itemsPerPage));
   const [currentPage, setCurrentPage] = useState(1);
   return (
