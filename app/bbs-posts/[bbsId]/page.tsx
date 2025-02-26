@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import React, { useState } from "react";
+// import { useParams } from 'next/navigation';
+import React, { /*useEffect,*/ useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -22,7 +23,31 @@ export const formSchema = z.object({
     .max(1000, { message: "本文は1000文字以内で入力してください。" }),
 });
 
-const CreateBBSPage = () => {
+// type PostData={
+//     title: string;
+//     images: { url: string }[];
+//     category: "value";
+//     content: string;
+// };
+
+//記事データを取得する関数※仮のAPI
+// const fetchPostData =async(bbsId:string):Promise<PostData>=>{
+//     return new Promise(resolve=>{
+//         setTimeout(()=>{
+//             resolve({
+//                 title: "サンプル記事のタイトル",
+//                 images: [{ url: "/sample-image.jpg" }],
+//                 category: "value",
+//                 content: "サンプル記事の本文。",
+//             })
+//         },1000)
+//     })
+// }
+
+const EditBBSPage = () => {
+  // const {bbsId}=useParams();
+  const [image, setImage] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,8 +57,17 @@ const CreateBBSPage = () => {
       content: "",
     },
   });
+  // useEffect(()=>{
+  //     if(!bbsId)return;
 
-  const [image, setImage] = useState<string | null>(null);
+  //     fetchPostData(bbsId as string)
+  //     .then((data:PostData)=>{
+  //         form.reset(data as z.infer<typeof formSchema>);
+  //         if(data.images.length>0){
+  //             setImage(data.images[0].url);
+  //         }
+  //     });
+  // },[bbsId,form]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event?.target.files?.[0];
@@ -165,4 +199,4 @@ const CreateBBSPage = () => {
   );
 };
 
-export default CreateBBSPage;
+export default EditBBSPage;
