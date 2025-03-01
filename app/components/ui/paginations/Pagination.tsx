@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
-
 interface Props {
   posts: number;
   itemsPerPage?: number;
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Pagination = ({ posts, itemsPerPage = 3 }: Props) => {
+const Pagination = ({ posts, itemsPerPage = 9, currentPage, setCurrentPage }: Props) => {
   const totalPages = Math.max(1, Math.ceil(posts / itemsPerPage));
-  const [currentPage, setCurrentPage] = useState(1);
+
   return (
     <div className="flex justify-center items-center">
       <button
