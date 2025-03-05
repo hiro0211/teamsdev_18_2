@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Pagination from "./components/ui/paginations/Pagination";
-import Image from "next/image";
-import Header from "./Header";
+import Pagination from "../components/ui/paginations/Pagination";
+import Header from "../Header";
 
-const Home = () => {
+const Profile = () => {
   const [posts] = useState(
     Array.from({ length: 30 }, (_, i) => ({
       id: i + 1,
@@ -16,16 +15,16 @@ const Home = () => {
     })),
   );
 
-  const itemsPerPage = 9;
+  const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSingleColumn(window.innerWidth < 640); // 640px未満なら1列
+      setIsSingleColumn(window.innerWidth < 640);
     };
 
-    handleResize(); // 初回実行
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -39,18 +38,7 @@ const Home = () => {
       <Header />
       <div className="p-4 sm:p-8 flex-1 overflow-y-auto">
         <div className="flex justify-center items-center mb-12 w-full">
-          <div className={`relative w-full max-w-md flex ${isSingleColumn ? "" : "items-center"}`}>
-            <input
-              type="text"
-              placeholder="Search..."
-              className={`w-full px-4 py-2 bg-gray-300 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                isSingleColumn ? "pr-10" : ""
-              }`}
-            />
-            <div className={`${isSingleColumn ? "absolute right-3 top-1/2 transform -translate-y-1/2" : "ml-3"}`}>
-              <Image src="/search.svg" alt="Search" width={20} height={20} className="cursor-pointer" />
-            </div>
-          </div>
+          <h1 className="text-6xl font-bold">Your Post</h1>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-9 px-4 lg:px-20">
@@ -89,4 +77,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Profile;
