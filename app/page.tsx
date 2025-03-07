@@ -4,21 +4,24 @@ import { useState, useEffect } from "react";
 import Pagination from "./components/ui/paginations/Pagination";
 import Image from "next/image";
 import Header from "./Header";
+import { fetchAllArticles, PostType } from "../lib/data";
 
 const Home = () => {
-  const [posts] = useState(
-    Array.from({ length: 30 }, (_, i) => ({
-      id: i + 1,
-      title: `Post Title ${i + 1}`,
-      author: "Author",
-      category: "Category",
-      time: "2 mins ago",
-    })),
-  );
-
+  const [posts, setPosts] = useState<PostType[]>([]);
   const itemsPerPage = 9;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
+
+  // 記事データを取得する処理
+  useEffect(() => {
+    const loadPosts = async () => {
+      const articles = await fetchAllArticles();
+      console.log("取得した記事データ:", articles);
+      setPosts(articles);
+    };
+
+    loadPosts();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -65,10 +68,10 @@ const Home = () => {
               <div className="flex flex-col justify-between h-[100px] p-4">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-lg font-semibold">{post.title}</h3>
-                  <span className="text-sm text-blue-500">{post.category}</span>
+                  <span className="text-sm text-blue-500">{post.category_id}</span>
                 </div>
                 <p className="text-sm text-gray-500">
-                  {post.author} ・ {post.time}
+                  {post.user_id} ・ {new Date(post.updated_at).toLocaleDateString()}
                 </p>
                 <div className="w-full h-3 bg-gray-200 rounded"></div>
               </div>
