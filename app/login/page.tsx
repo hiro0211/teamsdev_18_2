@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -7,27 +7,28 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { login, LoginSchema } from "../../lib/api/auth";
 
-
-
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const {register,handleSubmit,formState:{errors}}=useForm({resolver:zodResolver(LoginSchema)})
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(LoginSchema) });
 
-  const onSubmit =async(data:{email:string; password:string})=>{
+  const onSubmit = async (data: { email: string; password: string }) => {
     setErrorMessage(null);
-    const res = await login(data.email,data.password)
+    const res = await login(data.email, data.password);
 
     if (res.error) {
       setErrorMessage(res.error);
       return;
     }
 
-    router.push("/")
-    router.refresh()
-  }
-
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
