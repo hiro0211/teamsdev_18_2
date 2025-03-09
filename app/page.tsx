@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Pagination from "./components/ui/paginations/Pagination";
 import Image from "next/image";
 import Header from "./Header";
-import { fetchAllArticles, PostType } from "../lib/data";
+import { fetchAllArticles, PostType } from "../lib/api/posts";
 
 const Home = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
