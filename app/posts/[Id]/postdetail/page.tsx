@@ -1,7 +1,17 @@
 import React from "react";
-import Header from "../Header";
+import Header from "@/app/Header";
+import CommentForm from "@/app/components/comments/CommentForm";
 
-export default function Page() {
+type PageProps = {
+  params: {
+    Id: string;
+  };
+};
+
+export default async function PostDetailPage({ params }: PageProps) {
+  const { Id } = params;
+  const postId = Number(Id);
+
   return (
     <>
       <Header />
@@ -34,16 +44,7 @@ export default function Page() {
 
         {/* Comments Section */}
         <div className="bg-white max-w-3xl mx-auto mt-8 p-6">
-          <h2 className="text-xl font-bold mb-4">Comments</h2>
-          <div className="mb-6 flex">
-            <input
-              type="text"
-              placeholder="Your Comment..."
-              className="flex-grow p-2 border border-gray-300 rounded-lg mr-4"
-            />
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Comment</button>
-          </div>
-
+          <CommentForm postId={postId} />
           {/* Sample Comments */}
           <div className="pt-4">
             <div className="flex items-start gap-4 mb-4">
