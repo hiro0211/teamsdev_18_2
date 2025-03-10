@@ -6,7 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { schema, Schema } from "@/lib/validation/schema";
-import { signUpUser } from "@/lib/api/signup";
+import { signUpUser } from "@/lib/api/auth";
 
 export default function SignUp() {
   const router = useRouter();
