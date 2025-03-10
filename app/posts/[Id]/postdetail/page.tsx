@@ -4,13 +4,13 @@ import CommentForm from "@/app/components/comments/CommentForm";
 
 type PageProps = {
   params: {
-    Id: string;
+    id: string;
   };
 };
 
 export default async function PostDetailPage({ params }: PageProps) {
-  const { Id } = params;
-  const postId = Number(Id);
+  const { id } = params;
+  const postId = Number(id);
 
   return (
     <>

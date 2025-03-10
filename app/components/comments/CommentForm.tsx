@@ -27,6 +27,7 @@ export default function CommentForm({ postId }: { postId: number }) {
           type="text"
           placeholder="Your Comment..."
           className="flex-grow p-2 border border-gray-300 rounded-lg mr-4"
+          value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
         <button className="bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={handleCommentSubmit}>
