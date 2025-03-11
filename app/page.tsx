@@ -12,11 +12,9 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
 
-  // 記事データを取得する処理
   useEffect(() => {
     const loadPosts = async () => {
       const articles = await fetchAllArticles();
-      console.log("取得した記事データ:", articles);
       setPosts(articles);
     };
 
@@ -68,10 +66,10 @@ const Home = () => {
               <div className="flex flex-col justify-between h-[100px] p-4">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-lg font-semibold">{post.title}</h3>
-                  <span className="text-sm text-blue-500">{post.category_id}</span>
+                  <span className="text-sm text-blue-500">{post.category_name}</span>
                 </div>
                 <p className="text-sm text-gray-500">
-                  {post.user_id} ・ {new Date(post.updated_at).toLocaleDateString()}
+                  {post.user_name} ・ {new Date(post.updated_at).toLocaleDateString()}
                 </p>
                 <div className="w-full h-3 bg-gray-200 rounded"></div>
               </div>

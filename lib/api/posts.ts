@@ -3,7 +3,9 @@ import { supabase } from "../supabaseClient";
 export type PostType = {
   id: number;
   user_id: string;
+  user_name: string;
   category_id: number;
+  category_name: string;
   title: string;
   content: string;
   image_path: string;
@@ -12,32 +14,41 @@ export type PostType = {
 };
 
 const fetchAllArticles = async (): Promise<PostType[]> => {
-  const { data, error } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`*, users(name), categories(name)`)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("記事データの取得に失敗しました:", error);
     return [];
   }
 
-  return data;
+  return data.map((post) => ({
+    ...post,
+    user_name: (post.users as { name: string }).name,
+    category_name: (post.categories as { name: string }).name,
+  }));
 };
 
-const fetchUserArticles = async (): Promise<PostType[]> => {
+const getCurrentUserId = async (): Promise<string | null> => {
   const {
     data: { user },
-    error: userError,
+    error,
   } = await supabase.auth.getUser();
 
-  if (userError || !user) {
-    console.error("ログインユーザーの取得に失敗しました:", userError);
-    return [];
+  if (error || !user) {
+    console.error("ログインユーザーの取得に失敗しました:", error);
+    return null;
   }
 
-  const userId = user.id;
+  return user.id;
+};
 
+const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
   const { data, error } = await supabase
     .from("posts")
-    .select("*")
+    .select(`*, users(name), categories(name)`)
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
@@ -46,7 +57,11 @@ const fetchUserArticles = async (): Promise<PostType[]> => {
     return [];
   }
 
-  return data;
+  return data.map((post) => ({
+    ...post,
+    user_name: (post.users as { name: string }).name,
+    category_name: (post.categories as { name: string }).name,
+  }));
 };
 
-export { fetchAllArticles, fetchUserArticles };
+export { fetchAllArticles, getCurrentUserId, fetchUserArticles };
