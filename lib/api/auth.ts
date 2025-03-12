@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
-import { Schema } from "../validation/schema";
+import { SignUpSchema } from "../validation/signUpSchema";
 
-export const signUpUser = async (data: Schema) => {
+export const signUpUser = async (data: SignUpSchema) => {
   try {
     // Supabase Auth にユーザー登録
     const { data: authData, error: authError } = await supabase.auth.signUp({

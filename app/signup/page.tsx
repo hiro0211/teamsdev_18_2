@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { schema, Schema } from "@/lib/validation/schema";
+import { signUpSchema, SignUpSchema } from "@/lib/validation/signUpSchema";
 import { signUpUser } from "@/lib/api/auth";
 
 export default function SignUp() {
@@ -20,11 +20,11 @@ export default function SignUp() {
     //初期値
     defaultValues: { name: "", email: "", password: "" },
     //入力値の検証
-    resolver: zodResolver(schema),
+    resolver: zodResolver(signUpSchema),
   });
 
   //送信
-  const onSubmit: SubmitHandler<Schema> = async (data) => {
+  const onSubmit: SubmitHandler<SignUpSchema> = async (data) => {
     const { success, message } = await signUpUser(data);
     setMessage(message);
 
