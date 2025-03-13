@@ -2,10 +2,10 @@ import React from "react";
 import Header from "../../../Header";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-
 import { getPostDetail } from "@/lib/api/post";
 import { getComments } from "@/lib/api/comment";
 import { MessageSquare } from "lucide-react";
+import CommentForm from "@/app/components/comments/CommentForm";
 
 dayjs.extend(relativeTime);
 
@@ -19,6 +19,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   // params を await してからプロパティにアクセスする
   const awaitedParams = await params;
   const { Id } = awaitedParams;
+  const postId = Number(Id);
 
   // 記事詳細を取得
   const postDetail = await getPostDetail(Id);
@@ -52,15 +53,7 @@ export default async function PostDetailPage({ params }: PageProps) {
 
         {/* Comments Section */}
         <div className="bg-white max-w-3xl mx-auto mt-8 p-6">
-          <h2 className="text-xl font-bold mb-4">Comments</h2>
-          <div className="mb-6 flex">
-            <input
-              type="text"
-              placeholder="Your Comment..."
-              className="flex-grow p-2 border border-gray-300 rounded-lg mr-4"
-            />
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Comment</button>
-          </div>
+          <CommentForm postId={postId} />
 
           {/* Sample Comments */}
           <div className="pt-4">
