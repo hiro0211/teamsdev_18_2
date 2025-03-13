@@ -31,20 +31,6 @@ const fetchAllArticles = async (): Promise<PostType[]> => {
   }));
 };
 
-const getCurrentUserId = async (): Promise<string | null> => {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    console.error("ログインユーザーの取得に失敗しました:", error);
-    return null;
-  }
-
-  return user.id;
-};
-
 const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
   const { data, error } = await supabase
     .from("posts")
@@ -64,4 +50,4 @@ const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
   }));
 };
 
-export { fetchAllArticles, getCurrentUserId, fetchUserArticles };
+export { fetchAllArticles, fetchUserArticles };

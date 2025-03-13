@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Pagination from "../components/ui/paginations/Pagination";
 import Header from "../Header";
-import { fetchUserArticles, getCurrentUserId, PostType } from "../../lib/api/posts";
+import { fetchUserArticles, PostType } from "@/lib/api/posts";
+import { getCurrentUserId } from "@/lib/api/auth";
 
 const Profile = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
