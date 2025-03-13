@@ -1,13 +1,47 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema, SignUpSchema } from "@/lib/validation/signUpSchema";
+import { signUpUser } from "@/lib/api/auth";
 
 export default function SignUp() {
+  const router = useRouter();
+  const [message, setMessage] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    //初期値
+    defaultValues: { name: "", email: "", password: "" },
+    //入力値の検証
+    resolver: zodResolver(signUpSchema),
+  });
+
+  //送信
+  const onSubmit: SubmitHandler<SignUpSchema> = async (data) => {
+    const { success, message } = await signUpUser(data);
+    setMessage(message);
+
+    if (success) {
+      router.push("/");
+    }
+
+    router.refresh();
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <main className="w-full px-4">
         <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
           <h1 className="text-2xl font-semibold text-center mb-8">Sign Up</h1>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-2">
               <label htmlFor="name" className="block text-sm font-bold text-gray-700">
                 Name
@@ -17,7 +51,9 @@ export default function SignUp() {
                 id="name"
                 placeholder="Enter your name"
                 className="w-full p-2 border rounded-md bg-gray-100"
+                {...register("name", { required: true })}
               />
+              <div className="my-3 text-center text-sm text-red-500">{errors.name?.message}</div>
             </div>
 
             <div className="space-y-2">
@@ -25,11 +61,13 @@ export default function SignUp() {
                 Email
               </label>
               <input
-                type="email"
+                type="text"
                 id="email"
                 placeholder="Enter your email"
                 className="w-full p-2 border rounded-md bg-gray-100"
+                {...register("email", { required: true })}
               />
+              <div className="my-3 text-center text-sm text-red-500">{errors.email?.message}</div>
             </div>
 
             <div className="space-y-2">
@@ -41,7 +79,9 @@ export default function SignUp() {
                 id="password"
                 placeholder="Enter your password"
                 className="w-full p-2 border rounded-md bg-gray-100"
+                {...register("password", { required: true })}
               />
+              <div className="my-3 text-center text-sm text-red-500">{errors.password?.message}</div>
             </div>
 
             <div className="flex justify-center">
@@ -53,6 +93,8 @@ export default function SignUp() {
               </button>
             </div>
           </form>
+
+          {message && <div className="my-5 text-center text-sm text-red-500">{message}</div>}
 
           <p className="mt-6 text-center text-sm text-gray-600">
             Already have an account?{" "}
