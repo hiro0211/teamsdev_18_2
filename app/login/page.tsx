@@ -1,6 +1,35 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { login, LoginSchema } from "../../lib/api/auth";
 
 export default function Login() {
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(LoginSchema) });
+
+  const onSubmit = async (data: { email: string; password: string }) => {
+    setErrorMessage(null);
+    const res = await login(data.email, data.password);
+
+    if (res.error) {
+      setErrorMessage(res.error);
+      return;
+    }
+
+    router.push("/");
+    router.refresh();
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       {/* Main Content */}
@@ -8,7 +37,7 @@ export default function Login() {
         <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
           <h1 className="text-2xl font-semibold text-center mb-8">Sign In</h1>
 
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-bold text-gray-700">
                 Email
@@ -17,8 +46,10 @@ export default function Login() {
                 type="email"
                 id="email"
                 placeholder="Enter your email"
+                {...register("email")}
                 className="w-full p-2 border rounded-md bg-gray-100"
               />
+              {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
@@ -29,9 +60,13 @@ export default function Login() {
                 type="password"
                 id="password"
                 placeholder="Enter your password"
+                {...register("password")}
                 className="w-full p-2 border rounded-md bg-gray-100"
               />
+              {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
             </div>
+
+            {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
 
             <div className="flex justify-center">
               <button
