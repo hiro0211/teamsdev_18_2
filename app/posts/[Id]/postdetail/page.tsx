@@ -11,21 +11,21 @@ dayjs.extend(relativeTime);
 
 type PageProps = {
   params: {
-    Id: string;
+    id: string;
   };
 };
 
 export default async function PostDetailPage({ params }: PageProps) {
   // params を await してからプロパティにアクセスする
   const awaitedParams = await params;
-  const { Id } = awaitedParams;
-  const postId = Number(Id);
+  const { id } = awaitedParams;
+  const postId = Number(id);
 
   // 記事詳細を取得
-  const postDetail = await getPostDetail(Id);
+  const postDetail = await getPostDetail(id);
 
   // コメントを取得
-  const comments = await getComments(Id);
+  const comments = await getComments(id);
 
   return (
     <>
