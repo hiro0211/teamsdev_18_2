@@ -3,14 +3,20 @@ import { supabase } from "../supabaseClient";
 export type PostType = {
   id: number;
   user_id: string;
-  user_name: string;
+  user_name?: string;
   category_id: number;
-  category_name: string;
+  category_name?: string;
   title: string;
   content: string;
-  image_path: string;
-  created_at: string;
+  image_path?: string;
+  created_at?: string;
   updated_at: string;
+};
+
+// category_nameとuser_nameをマッピングするための型
+export type RawPostType = PostType & {
+  users?: { name: string } | null;
+  categories?: { name: string } | null;
 };
 
 const fetchAllArticles = async (): Promise<PostType[]> => {

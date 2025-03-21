@@ -3,40 +3,41 @@
 import { useState, useEffect } from "react";
 import Pagination from "../components/ui/paginations/Pagination";
 import Header from "../Header";
-import { fetchUserArticles, PostType } from "@/lib/api/posts";
 import { getCurrentUserId } from "@/lib/api/auth";
+import { fetchPaginatedUserPosts } from "@/lib/api/pagination";
+import { PostType } from "@/lib/api/posts";
 
-const Profile = () => {
+export default function Profile() {
   const [posts, setPosts] = useState<PostType[]>([]);
+  const [totalPosts, setTotalPosts] = useState(0);
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
 
+  // ページが変わるたびに投稿を再取得
   useEffect(() => {
     const loadPosts = async () => {
       const userId = await getCurrentUserId();
       if (!userId) return;
-
-      const articles = await fetchUserArticles(userId);
-      setPosts(articles);
+      const { data, total } = await fetchPaginatedUserPosts(userId, currentPage, itemsPerPage);
+      setPosts(data);
+      setTotalPosts(total);
     };
-
     loadPosts();
-  }, []);
+  }, [currentPage]);
 
+  // レイアウト切り替え
   useEffect(() => {
     const handleResize = () => {
       setIsSingleColumn(window.innerWidth < 640);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const indexOfLastPost = currentPage * itemsPerPage;
-  const indexOfFirstPost = indexOfLastPost - itemsPerPage;
-  const currentPosts = isSingleColumn ? posts : posts.slice(indexOfFirstPost, indexOfLastPost);
+  // すでにバックエンドでページ分のみ取得しているのでスライスは不要
+  const currentPosts = posts;
 
   return (
     <div className="flex flex-col bg-white w-full min-h-screen overflow-x-hidden">
@@ -57,7 +58,7 @@ const Profile = () => {
               <div className="flex flex-col justify-between h-[100px] p-4">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-lg font-semibold">{post.title}</h3>
-                  <span className="text-sm text-blue-500">{post.category_name}</span>
+                  <span className="text-sm text-blue-500">{post.category_name || post.category_id}</span>
                 </div>
                 <p className="text-sm text-gray-500">
                   {post.user_name} ・ {new Date(post.updated_at).toLocaleDateString()}
@@ -70,7 +71,7 @@ const Profile = () => {
 
         <div className={`mt-10 flex justify-center ${isSingleColumn ? "hidden" : ""}`}>
           <Pagination
-            posts={posts.length}
+            posts={totalPosts}
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
@@ -79,6 +80,4 @@ const Profile = () => {
       </div>
     </div>
   );
-};
-
-export default Profile;
+}
