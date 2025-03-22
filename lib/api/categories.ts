@@ -10,8 +10,8 @@ export const fetchCategories = async () => {
 
   if (error) {
     console.error("カテゴリの取得に失敗しました:", error)
-    return [];
+    throw error
   }
 
-  return data;
+  return data
 }
