@@ -3,9 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState,useEffect  } from "react";
 import { useForm } from "react-hook-form";
 import { login, LoginSchema } from "../../lib/api/auth";
+import { isAuthenticated } from "@/lib/api/auth"; 
 
 export default function Login() {
   const router = useRouter();
@@ -16,6 +17,17 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(LoginSchema) });
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isAuthenticated();
+      if (authenticated) {
+        router.push("/"); 
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const onSubmit = async (data: { email: string; password: string }) => {
     setErrorMessage(null);

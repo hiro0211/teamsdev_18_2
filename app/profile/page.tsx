@@ -1,16 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Pagination from "../components/ui/paginations/Pagination";
 import Header from "../Header";
 import { fetchUserArticles, PostType } from "@/lib/api/posts";
-import { getCurrentUserId } from "@/lib/api/auth";
+import { getCurrentUserId,isAuthenticated } from "@/lib/api/auth";
 
 const Profile = () => {
+  const router = useRouter();
   const [posts, setPosts] = useState<PostType[]>([]);
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
+
+
+    useEffect(() => {
+      const checkAuth = async () => {
+        const authenticated = await isAuthenticated();
+        if (!authenticated) {
+          router.push("/login"); 
+        }
+      };
+  
+      checkAuth();
+    }, [router]);
 
   useEffect(() => {
     const loadPosts = async () => {

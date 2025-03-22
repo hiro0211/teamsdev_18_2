@@ -9,9 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 // import { useParams } from 'next/navigation';
-import React, { /*useEffect,*/ useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import {isAuthenticated} from "@/lib/api/auth";
 
 export const formSchema = z.object({
   title: z.string().min(2, { message: "タイトルは2文字以上で入力してください。" }),
@@ -45,6 +47,7 @@ export const formSchema = z.object({
 // }
 
 const EditBBSPage = () => {
+  const router = useRouter();
   // const {bbsId}=useParams();
   const [image, setImage] = useState<string | null>(null);
 
@@ -57,6 +60,19 @@ const EditBBSPage = () => {
       content: "",
     },
   });
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isAuthenticated();
+      if (!authenticated) {
+        router.push("/login"); 
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+
   // useEffect(()=>{
   //     if(!bbsId)return;
 
