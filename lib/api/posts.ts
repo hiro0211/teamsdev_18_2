@@ -81,15 +81,4 @@ export const updatePost = async (postId: string, data: PostUpdateType) => {
   }
 };
 
-//カテゴリー一覧を取得
-export const fetchCategories = async () => {
-  try {
-    const { data, error } = await supabase.from("categories").select("id,name");
-    if (error) throw error;
-    return data || [];
-  } catch (error) {
-    console.error("カテゴリーデータの取得に失敗しました", error);
-  }
-};
-
 export { fetchAllArticles, fetchUserArticles };
