@@ -13,6 +13,14 @@ export type PostType = {
   updated_at: string;
 };
 
+export type PostUpdateType = {
+  category_id: number;
+  title: string;
+  content: string;
+  image_path: string;
+  updated_at: string;
+};
+
 const fetchAllArticles = async (): Promise<PostType[]> => {
   const { data, error } = await supabase
     .from("posts")
@@ -48,6 +56,29 @@ const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
     user_name: (post.users as { name: string }).name,
     category_name: (post.categories as { name: string }).name,
   }));
+};
+
+//記事を更新する
+export const updatePost = async (postId: string, data: PostUpdateType) => {
+  try {
+    const response = await fetch(`/api/posts/${postId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`記事を更新に失敗しました${errorMessage}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("APIエラー:", error);
+    throw error;
+  }
 };
 
 export { fetchAllArticles, fetchUserArticles };
