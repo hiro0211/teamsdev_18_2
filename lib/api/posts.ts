@@ -13,7 +13,7 @@ export type PostType = {
   updated_at: string;
 };
 
-const fetchAllArticles = async (): Promise<PostType[]> => {
+export const fetchAllArticles = async (): Promise<PostType[]> => {
   const { data, error } = await supabase
     .from("posts")
     .select(`*, users(name), categories(name)`)
@@ -31,7 +31,7 @@ const fetchAllArticles = async (): Promise<PostType[]> => {
   }));
 };
 
-const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
+export const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
   const { data, error } = await supabase
     .from("posts")
     .select(`*, users(name), categories(name)`)
@@ -50,4 +50,24 @@ const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
   }));
 };
 
-export { fetchAllArticles, fetchUserArticles };
+export const PostSearch = async (searchKeyword: string) => {
+  if (!searchKeyword.trim()) {
+    return await fetchAllArticles();
+  }
+
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`*, users(name), categories(name)`)
+    .ilike("title", `%${searchKeyword}%`)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error("記事データの取得に失敗しました: " + error.message);
+  }
+
+  return data.map((post) => ({
+    ...post,
+    user_name: (post.users as { name: string }).name,
+    category_name: (post.categories as { name: string }).name,
+  }));
+}
