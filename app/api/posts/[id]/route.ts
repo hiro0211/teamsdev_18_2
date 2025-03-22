@@ -5,7 +5,7 @@ type PostData = {
   user_id: string;
 };
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     //認証情報取得関数未作成のため仮でgetSessionにしてコメントアウト
     // const session =await getSession(req)
