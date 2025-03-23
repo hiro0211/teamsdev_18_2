@@ -18,13 +18,23 @@ export default function Home() {
   const itemsPerPage = 9;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
-
+  
   // ページが変わるたびに記事を再取得
   useEffect(() => {
     const loadPosts = async () => {
-      const { data, total } = await fetchPaginatedPosts(currentPage, itemsPerPage);
-      setPosts(data);
-      setTotalPosts(total);
+      try {
+        // ここで throw new Error(...) され得るので try~catch で囲む
+        const { data, total } = await fetchPaginatedPosts(currentPage, itemsPerPage);
+        setPosts(data);
+        setTotalPosts(total);
+      } catch (error) {
+        // エラーをキャッチして alert() を表示
+        if (error instanceof Error) {
+          alert(error.message);
+        } else {
+          alert("予期しないエラーが発生しました");
+        }
+      }
     };
     loadPosts();
   }, [currentPage]);

@@ -19,43 +19,7 @@ export type RawPostType = PostType & {
   categories?: { name: string } | null;
 };
 
-const fetchAllArticles = async (): Promise<PostType[]> => {
-  const { data, error } = await supabase
-    .from("posts")
-    .select(`*, users(name), categories(name)`)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("記事データの取得に失敗しました:", error);
-    return [];
-  }
-
-  return data.map((post) => ({
-    ...post,
-    user_name: (post.users as { name: string }).name,
-    category_name: (post.categories as { name: string }).name,
-  }));
-};
-
-const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
-  const { data, error } = await supabase
-    .from("posts")
-    .select<string, RawPostType>(`*, users(name), categories(name)`)
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("ユーザーの記事データの取得に失敗しました:", error);
-    return [];
-  }
-
-  return (data ?? []).map((post) => ({
-    ...post,
-    user_name: post.users?.name ?? "",
-    category_name: post.categories?.name ?? "",
-  }));
-};
-
+// 記事一覧を取得する
 export async function fetchPaginatedPosts(
   page: number,
   limit: number,
@@ -94,38 +58,6 @@ export async function fetchPaginatedPosts(
     total: count ?? 0,
   };
 }
-// ユーザーの投稿をページネーションで取得 プロフィールページで使用
-export async function fetchPaginatedUserPosts(
-  userId: string,
-  page: number,
-  limit: number,
-): Promise<{ data: PostType[]; total: number }> {
-  const start = (page - 1) * limit;
-  const end = start + limit - 1;
-
-  const { data, count, error } = await supabase
-    .from("posts")
-    .select<string, RawPostType>(`*, users(name), categories(name)`, { count: "exact" })
-    .eq("user_id", userId)
-    .range(start, end)
-    .order("updated_at", { ascending: false });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  // 取得データを map して、users.name を user_name に、categories.name を category_name に入れる
-  const typedData: PostType[] = ((data as RawPostType[]) ?? []).map((post) => ({
-    ...post,
-    user_name: post.users?.name ?? "", // user_name に代入
-    category_name: post.categories?.name ?? "", // category_name に代入
-  }));
-
-  return {
-    data: typedData,
-    total: count ?? 0,
-  };
-}
 
 // 記事詳細を取得する
 export const getPostDetail = async (id: string) => {
@@ -138,5 +70,3 @@ export const getPostDetail = async (id: string) => {
 
   return data;
 };
-
-export { fetchAllArticles, fetchUserArticles };
