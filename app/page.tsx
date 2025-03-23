@@ -6,7 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Pagination from "./components/ui/paginations/Pagination";
 import Image from "next/image";
 import Header from "./Header";
-import { fetchPaginatedPosts } from "../lib/api/pagination";
+import { fetchPaginatedPosts } from "@/lib/api/posts";
 import { PostType } from "../lib/api/posts";
 import Link from "next/link";
 
@@ -53,21 +53,8 @@ export default function Home() {
                 isSingleColumn ? "pr-10" : ""
               }`}
             />
-            <div
-              className={`${
-                isSingleColumn
-                  ? "absolute right-3 top-1/2 transform -translate-y-1/2"
-                  : "ml-3"
-              }`}
-            >
-              <Image
-                src="/search.svg"
-                alt="Search"
-                width={20}
-                height={20}
-                unoptimized
-                className="cursor-pointer"
-              />
+            <div className={`${isSingleColumn ? "absolute right-3 top-1/2 transform -translate-y-1/2" : "ml-3"}`}>
+              <Image src="/search.svg" alt="Search" width={20} height={20} unoptimized className="cursor-pointer" />
             </div>
           </div>
         </div>
@@ -86,23 +73,13 @@ export default function Home() {
                   border border-gray-300 rounded-lg shadow-md bg-white 
                   flex flex-col w-full sm:w-4/5 lg:w-3/4 min-w-[250px] max-w-[400px]
                   mx-auto cursor-pointer
-                  ${index % 3 === 0
-                    ? "lg:ml-auto lg:mr-0"
-                    : index % 3 === 1
-                    ? "lg:mx-auto"
-                    : "lg:mr-auto lg:ml-0"}
+                  ${index % 3 === 0 ? "lg:ml-auto lg:mr-0" : index % 3 === 1 ? "lg:mx-auto" : "lg:mr-auto lg:ml-0"}
                 `}
               >
                 {/* 写真の部分 */}
                 <div className="relative w-full h-[200px] bg-gray-300">
                   {post.image_path && (
-                    <Image
-                      src={post.image_path}
-                      alt={post.title}
-                      fill
-                      style={{ objectFit: "cover" }}
-                      unoptimized
-                    />
+                    <Image src={post.image_path} alt={post.title} fill style={{ objectFit: "cover" }} unoptimized />
                   )}
                 </div>
 

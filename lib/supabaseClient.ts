@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database.types";
 
 // SupabaseのURLとAnonキーを環境変数から取得
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -9,4 +10,4 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Supabase URLかAnon Keyが設定されていません");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);

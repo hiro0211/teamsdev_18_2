@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Pagination from "../components/ui/paginations/Pagination";
 import Header from "../Header";
 import { getCurrentUserId } from "@/lib/api/auth";
-import { fetchPaginatedUserPosts } from "@/lib/api/pagination";
+import { fetchPaginatedPosts } from "@/lib/api/posts";
 import { PostType } from "@/lib/api/posts";
 
 export default function Profile() {
@@ -19,7 +19,7 @@ export default function Profile() {
     const loadPosts = async () => {
       const userId = await getCurrentUserId();
       if (!userId) return;
-      const { data, total } = await fetchPaginatedUserPosts(userId, currentPage, itemsPerPage);
+      const { data, total } = await fetchPaginatedPosts(currentPage, itemsPerPage, { userId });
       setPosts(data);
       setTotalPosts(total);
     };
