@@ -62,7 +62,7 @@ const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
 export const updatePost = async (postId: string, data: PostUpdateType) => {
   try {
     const response = await fetch(`/api/posts/${postId}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
