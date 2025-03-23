@@ -1,20 +1,34 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Pagination from "../components/ui/paginations/Pagination";
 import Header from "../Header";
 import { getCurrentUserId } from "@/lib/api/auth";
-import { fetchPaginatedPosts } from "@/lib/api/posts";
-import { PostType } from "@/lib/api/posts";
+import { fetchPaginatedPosts, PostType } from "@/lib/api/posts";
+import { getCurrentUserId,isAuthenticated } from "@/lib/api/auth";
 
 export default function Profile() {
+  const router = useRouter();
   const [posts, setPosts] = useState<PostType[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
-
+  
   // ページが変わるたびに投稿を再取得
+
+    useEffect(() => {
+      const checkAuth = async () => {
+        const authenticated = await isAuthenticated();
+        if (!authenticated) {
+          router.push("/login"); 
+        }
+      };
+  
+      checkAuth();
+    }, [router]);
+
   useEffect(() => {
     const loadPosts = async () => {
       const userId = await getCurrentUserId();
