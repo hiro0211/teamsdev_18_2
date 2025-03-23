@@ -11,7 +11,7 @@ import { getPostDetail } from "@/lib/api/post";
 import { updatePost } from "@/lib/api/posts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,9 +30,11 @@ const EditPostPage = () => {
   const [image, setImage] = useState<string | null>(null);
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
 
+  const router = useRouter();
+
   const params = useParams();
   const pathname = usePathname();
-  const postIdRaw = params?.Id || pathname.split("/")[2];
+  const postIdRaw = params?.id || pathname.split("/")[2];
   const postId = Array.isArray(postIdRaw) ? postIdRaw[0] : postIdRaw;
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -118,6 +120,7 @@ const EditPostPage = () => {
       });
 
       alert("記事を更新しました");
+      router.push(`/posts/${postId}/postdetail`)
     } catch (error) {
       console.error(error);
       alert("記事の更新に失敗しました。もう一度お試しください");
