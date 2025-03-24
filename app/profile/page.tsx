@@ -4,9 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Pagination from "../components/ui/paginations/Pagination";
 import Header from "../Header";
-import { getCurrentUserId } from "@/lib/api/auth";
 import { fetchPaginatedPosts, PostType } from "@/lib/api/posts";
-import { getCurrentUserId,isAuthenticated } from "@/lib/api/auth";
+import { getCurrentUserId, isAuthenticated } from "@/lib/api/auth";
 
 export default function Profile() {
   const router = useRouter();
@@ -15,27 +14,37 @@ export default function Profile() {
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
-  
+
   // ページが変わるたびに投稿を再取得
 
-    useEffect(() => {
-      const checkAuth = async () => {
-        const authenticated = await isAuthenticated();
-        if (!authenticated) {
-          router.push("/login"); 
-        }
-      };
-  
-      checkAuth();
-    }, [router]);
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isAuthenticated();
+      if (!authenticated) {
+        router.push("/login");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   useEffect(() => {
     const loadPosts = async () => {
       const userId = await getCurrentUserId();
       if (!userId) return;
-      const { data, total } = await fetchPaginatedPosts(currentPage, itemsPerPage, { userId });
-      setPosts(data);
-      setTotalPosts(total);
+      try {
+        // ここで throw new Error(...) され得るので try~catch で囲む
+        const { data, total } = await fetchPaginatedPosts(currentPage, itemsPerPage, { userId });
+        setPosts(data);
+        setTotalPosts(total);
+      } catch (error) {
+        // エラーをキャッチして alert() を表示
+        if (error instanceof Error) {
+          alert(error.message);
+        } else {
+          alert("予期しないエラーが発生しました");
+        }
+      }
     };
     loadPosts();
   }, [currentPage]);

@@ -18,7 +18,7 @@ export default function Home() {
   const itemsPerPage = 9;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
-  
+
   // ページが変わるたびに記事を再取得
   useEffect(() => {
     const loadPosts = async () => {
