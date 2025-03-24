@@ -73,7 +73,6 @@ export const signUpUser = async (data: SignUpSchema) => {
   }
 };
 
-
 export const isAuthenticated = async (): Promise<boolean> => {
   const {
     data: { user },

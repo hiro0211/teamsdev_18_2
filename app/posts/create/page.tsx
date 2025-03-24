@@ -8,11 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import {isAuthenticated} from "@/lib/api/auth";
+import { isAuthenticated } from "@/lib/api/auth";
 
 export const formSchema = z.object({
   title: z.string().min(2, { message: "タイトルは2文字以上で入力してください。" }),
@@ -38,16 +38,16 @@ const CreateBBSPage = () => {
 
   const [image, setImage] = useState<string | null>(null);
 
-      useEffect(() => {
-        const checkAuth = async () => {
-          const authenticated = await isAuthenticated();
-          if (!authenticated) {
-            router.push("/login"); 
-          }
-        };
-    
-        checkAuth();
-      }, [router]);
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isAuthenticated();
+      if (!authenticated) {
+        router.push("/login");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event?.target.files?.[0];

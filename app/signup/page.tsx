@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, SignUpSchema } from "@/lib/validation/signUpSchema";
 import { signUpUser } from "@/lib/api/auth";
-import { isAuthenticated } from "@/lib/api/auth"; 
+import { isAuthenticated } from "@/lib/api/auth";
 
 export default function SignUp() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function SignUp() {
     const checkAuth = async () => {
       const authenticated = await isAuthenticated();
       if (authenticated) {
-        router.push("/"); 
+        router.push("/");
       }
     };
     checkAuth();
