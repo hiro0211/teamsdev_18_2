@@ -61,10 +61,19 @@ const fetchUserArticles = async (userId: string): Promise<PostType[]> => {
 //記事を更新する
 export const updatePost = async (postId: string, data: PostUpdateType) => {
   try {
+    const session = await supabase.auth.getSession()
+    const accessToken = session.data.session?.access_token
+
+    if(!accessToken){
+      throw new Error("アクセストークンが取得できませんでした。ログインしているか確認してください")
+    }
+
+
     const response = await fetch(`/api/posts/${postId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization:`Bearer ${accessToken}`,
       },
       body: JSON.stringify(data),
     });

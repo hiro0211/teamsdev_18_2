@@ -7,18 +7,29 @@ type PostData = {
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    //認証情報取得関数未作成のため仮でgetSessionにしてコメントアウト
-    // const session =await getSession(req)
-    // if(!session){
-    //     return NextResponse.json({error:"Unauthorized"},{status:401})
-    // }
-
     const postId = params.id;
     const body = await req.json();
     const { category_id, title, content, image_path, updated_at } = body;
 
     if (!category_id || !title || !content || !image_path || !updated_at) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    //アクセストークンを取得
+    const access_token = req.headers.get("Authorization")?.replace("Bearer","")
+
+    if(!access_token){
+      return NextResponse.json({error:"Unauthorized:No token"},{status:401})
+    }
+
+    //トークンからログインユーザーを取得
+    const{
+      data:{user},
+      error:authError,
+    } = await supabase.auth.getUser(access_token)
+
+    if (authError||!user){
+      return NextResponse.json({error:"Unauthorized: Invalid token"},{status:401})
     }
 
     //記事の作成者を取得
@@ -32,10 +43,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    //認証情報更新関数未作成のためsessionにエラーが出るのでコメントアウト
-    // if(post.user_id !== session.user.id){
-    //     return NextResponse.json({error:"Forbidden:Not the owner"},{status:403})
-    // }
+    //ログインユーザーと「作成者が一致しない場合は拒否
+    if(post.user_id !== user.id){
+        return NextResponse.json({error:"Forbidden:Not the owner"},{status:403})
+    }
 
     //記事を更新
     const { error: updateError } = await supabase
