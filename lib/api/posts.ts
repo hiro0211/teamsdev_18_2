@@ -1,4 +1,5 @@
 import { supabase } from "../supabaseClient";
+import { getCurrentUserId } from "@/lib/api/auth";
 
 export type PostType = {
   id: number;
@@ -69,4 +70,50 @@ export const getPostDetail = async (id: string) => {
   }
 
   return data;
+};
+
+export const createPost = async (
+  title: string,
+  content: string,
+  category_id: number,
+  image_path: string = "dummy-image-path.jpg",
+) => {
+  const user_id = (await getCurrentUserId())!;
+
+  const { data, error } = await supabase
+    .from("posts")
+    .insert([
+      {
+        user_id,
+        title,
+        content,
+        category_id,
+        image_path,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error("記事の作成に失敗しました:", error);
+    throw new Error("記事の作成に失敗しました。");
+  }
+
+  return data;
+};
+
+export const uploadImageToStorage = async (file: File, bucketName: string = "posts") => {
+  const fileName = `${Date.now()}-${file.name}`;
+  const { data, error } = await supabase.storage.from(bucketName).upload(fileName, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+
+  if (error) {
+    console.error("画像アップロードに失敗しました:", error);
+    throw error;
+  }
+
+  return supabase.storage.from(bucketName).getPublicUrl(data.path).data.publicUrl;
 };
