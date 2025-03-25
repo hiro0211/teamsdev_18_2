@@ -16,7 +16,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     //アクセストークンを取得
-    const access_token = req.headers.get("Authorization")?.replace("Bearer","")
+    const access_token = req.headers.get("Authorization")?.replace("Bearer ","")
 
     if(!access_token){
       return NextResponse.json({error:"Unauthorized:No token"},{status:401})
