@@ -6,84 +6,104 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { isAuthenticated } from "@/lib/api/auth";
+import { fetchCategories } from "@/lib/api/categories";
+import { getPostDetail } from "@/lib/api/post";
+import { updatePost } from "@/lib/api/posts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-// import { useParams } from 'next/navigation';
+import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
-import {isAuthenticated} from "@/lib/api/auth";
 
 export const formSchema = z.object({
   title: z.string().min(2, { message: "タイトルは2文字以上で入力してください。" }),
   images: z.object({ url: z.string() }).array(),
-  category: z.enum(["value"], { message: "カテゴリーを選択してください。" }),
+  category: z.string().min(1, { message: "カテゴリーを選択してください。" }),
   content: z
     .string()
     .min(10, { message: "本文は10文字以上で入力してください。" })
     .max(1000, { message: "本文は1000文字以内で入力してください。" }),
 });
 
-// type PostData={
-//     title: string;
-//     images: { url: string }[];
-//     category: "value";
-//     content: string;
-// };
-
-//記事データを取得する関数※仮のAPI
-// const fetchPostData =async(bbsId:string):Promise<PostData>=>{
-//     return new Promise(resolve=>{
-//         setTimeout(()=>{
-//             resolve({
-//                 title: "サンプル記事のタイトル",
-//                 images: [{ url: "/sample-image.jpg" }],
-//                 category: "value",
-//                 content: "サンプル記事の本文。",
-//             })
-//         },1000)
-//     })
-// }
-
-const EditBBSPage = () => {
-  const router = useRouter();
-  // const {bbsId}=useParams();
+const EditPostPage = () => {
   const [image, setImage] = useState<string | null>(null);
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
+
+  const router = useRouter();
+
+  const params = useParams();
+  const pathname = usePathname();
+  const postIdRaw = params?.id || pathname.split("/")[2];
+  const postId = Array.isArray(postIdRaw) ? postIdRaw[0] : postIdRaw;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       images: [],
-      category: undefined,
+      category: "",
       content: "",
     },
   });
 
+  useEffect(()=>{
+    const checkAuth = async () =>{
+      const authenticated = await isAuthenticated()
+      if(!authenticated){
+        router.push("/login")
+      }
+    }
+
+    checkAuth()
+  },[router])
+
   useEffect(() => {
-    const checkAuth = async () => {
-      const authenticated = await isAuthenticated();
-      if (!authenticated) {
-        router.push("/login"); 
+    const loadCategories = async () => {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error("カテゴリーの取得に失敗しました", error);
+        alert("データの取得に失敗しました。時間を置いて再試行してください。");
+      }
+    };
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchPostData = async () => {
+      if (!postId) return;
+
+      try {
+        const data = await getPostDetail(postId);
+        let validImagePath = data.image_path;
+        if (!validImagePath) {
+          validImagePath = "/default-image.jpg";
+        }
+
+        try {
+          new URL(validImagePath);
+        } catch {
+          validImagePath = "/default-image.jpg";
+        }
+
+        form.reset({
+          title: data.title,
+          images: [{ url: validImagePath }],
+          category: String(data.category_id),
+          content: data.content,
+        });
+        setImage(validImagePath);
+      } catch (error) {
+        console.error("記事データの取得に失敗しました", error);
+        alert("記事データの取得に失敗しました。時間を置いて再試行してください。");
       }
     };
 
-    checkAuth();
-  }, [router]);
-
-
-  // useEffect(()=>{
-  //     if(!bbsId)return;
-
-  //     fetchPostData(bbsId as string)
-  //     .then((data:PostData)=>{
-  //         form.reset(data as z.infer<typeof formSchema>);
-  //         if(data.images.length>0){
-  //             setImage(data.images[0].url);
-  //         }
-  //     });
-  // },[bbsId,form]);
+    fetchPostData();
+  }, [postId, form]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event?.target.files?.[0];
@@ -96,8 +116,27 @@ const EditBBSPage = () => {
     setImage(null);
   };
 
-  const onSubmit = () => {
-    console.log("test");
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (!postId) {
+      alert("記事のIDが取得できませんでした");
+      return;
+    }
+
+    try {
+      await updatePost(postId, {
+        category_id: Number(data.category),
+        title: data.title,
+        content: data.content,
+        image_path: data.images.length > 0 ? data.images[0].url : "",
+        updated_at: new Date().toISOString(),
+      });
+
+      alert("記事を更新しました");
+      router.push(`/posts/${postId}/postdetail`)
+    } catch (error) {
+      console.error(error);
+      alert("記事の更新に失敗しました。もう一度お試しください");
+    }
   };
 
   return (
@@ -174,14 +213,18 @@ const EditBBSPage = () => {
             render={({ field }) => (
               <FormItem className="flex flex-col items-start">
                 <FormLabel className="text-sm font-semibold">Category</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-32 text-sm border-gray-300 shadow-sm">
                       <SelectValue placeholder="カテゴリーを選択" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="value">value</SelectItem>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={String(cat.id)}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -215,4 +258,4 @@ const EditBBSPage = () => {
   );
 };
 
-export default EditBBSPage;
+export default EditPostPage;
