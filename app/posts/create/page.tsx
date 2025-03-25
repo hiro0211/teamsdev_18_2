@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createPost, uploadImageToStorage } from "@/lib/api/posts";
 import { useRouter } from "next/navigation";
-// import { getCurrentUserId } from "@/lib/api/auth"; // 認証ユーザーの取得
 
 export const formSchema = z.object({
   title: z.string().min(2, { message: "タイトルは2文字以上で入力してください。" }),
@@ -60,19 +59,10 @@ const CreateBBSPage = () => {
     setIsSubmitting(true);
 
     try {
-      // const user_id = await getCurrentUserId(); // ログインユーザーのIDを取得
-      const user_id = "c9bda6ca-27a5-444c-8839-0d50c3761fae"; // 一時的にダミーのUUIDを使用
-
-      if (!user_id) {
-        alert("ログインしていません。");
-        return;
-      }
-
       let imageUrl = "dummy-image-path.jpg";
       if (image) {
         imageUrl = await uploadImageToStorage(image, "posts");
       }
-
       const postData = {
         title: values.title,
         content: values.content,
@@ -80,12 +70,8 @@ const CreateBBSPage = () => {
         image_path: imageUrl,
       };
 
-      const result = await createPost(postData.title, postData.content, postData.category_id, postData.image_path);
-      if (result) {
-        router.push("/");
-      } else {
-        alert("記事の投稿に失敗しました");
-      }
+      await createPost(postData.title, postData.content, postData.category_id, postData.image_path);
+      router.push("/");
     } catch (error) {
       console.error("投稿エラー:", error);
       alert("記事の投稿に失敗しました");

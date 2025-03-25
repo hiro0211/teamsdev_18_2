@@ -1,5 +1,5 @@
 import { supabase } from "../supabaseClient";
-// import { getCurrentUserId } from "@/lib/api/auth"; // 認証情報を取得
+import { getCurrentUserId } from "@/lib/api/auth";
 
 export type PostType = {
   id: number;
@@ -57,13 +57,7 @@ export const createPost = async (
   category_id: number,
   image_path: string = "dummy-image-path.jpg",
 ) => {
-  // const user_id = await getCurrentUserId(); // ログインユーザーのIDを取得
-  const user_id = "c9bda6ca-27a5-444c-8839-0d50c3761fae"; // 一旦ダミーのUUIDを使用
-
-  if (!user_id) {
-    console.error("ユーザーがログインしていません。");
-    return null;
-  }
+  const user_id = (await getCurrentUserId())!;
 
   const { data, error } = await supabase
     .from("posts")
@@ -82,7 +76,7 @@ export const createPost = async (
 
   if (error) {
     console.error("記事の作成に失敗しました:", error);
-    return null;
+    throw new Error("記事の作成に失敗しました。");
   }
 
   return data;
