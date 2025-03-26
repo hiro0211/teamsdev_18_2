@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../../../Header";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { getPostDetail } from "@/lib/api/post";
+import { getPostDetail } from "@/lib/api/posts";
 import { getComments } from "@/lib/api/comment";
 import { MessageSquare } from "lucide-react";
 import CommentForm from "@/app/components/comments/CommentForm";

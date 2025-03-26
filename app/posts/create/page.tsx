@@ -8,9 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { createPost, uploadImageToStorage } from "@/lib/api/posts";
+import { useRouter } from "next/navigation";
+import { isAuthenticated } from "@/lib/api/auth";
 
 export const formSchema = z.object({
   title: z.string().min(2, { message: "タイトルは2文字以上で入力してください。" }),
@@ -23,6 +26,7 @@ export const formSchema = z.object({
 });
 
 const CreateBBSPage = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,27 +37,66 @@ const CreateBBSPage = () => {
     },
   });
 
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isAuthenticated();
+      if (!authenticated) {
+        router.push("/login");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event?.target.files?.[0];
+
     if (file) {
-      setImage(URL.createObjectURL(file)); //画像をプレビュー
+      setImage(file);
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
     }
   };
 
   const removeImage = () => {
     setImage(null);
+    setPreview(null);
   };
 
-  const onSubmit = () => {
-    console.log("test");
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+
+    try {
+      let imageUrl = "dummy-image-path.jpg";
+      if (image) {
+        imageUrl = await uploadImageToStorage(image, "posts");
+      }
+      const postData = {
+        title: values.title,
+        content: values.content,
+        category_id: 1,
+        image_path: imageUrl,
+      };
+
+      await createPost(postData.title, postData.content, postData.category_id, postData.image_path);
+      router.push("/");
+    } catch (error) {
+      console.error("投稿エラー:", error);
+      alert("記事の投稿に失敗しました");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full sm:w-3/4 lg:w-1/2 p-4 sm:p-6 mx-auto">
         <h2 className="text-2xl font-bold text-center sm:hidden">Create Blog</h2>
+
         <FormField
           control={form.control}
           name="title"
@@ -67,6 +110,7 @@ const CreateBBSPage = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="images"
@@ -74,9 +118,9 @@ const CreateBBSPage = () => {
             <FormItem>
               <FormControl>
                 <Card className="border-dashed border-gray-400 w-full">
-                  {image ? (
+                  {preview ? (
                     <div>
-                      <Image src={image} alt="Preview" layout="responsive" width={400} height={300} />
+                      <Image src={preview} alt="Preview" layout="responsive" width={400} height={300} />
                       <Button onClick={removeImage} type="button">
                         ×
                       </Button>
@@ -117,6 +161,7 @@ const CreateBBSPage = () => {
             </FormItem>
           )}
         />
+
         <div className="flex justify-end">
           <FormField
             control={form.control}
@@ -139,6 +184,7 @@ const CreateBBSPage = () => {
             )}
           />
         </div>
+
         <FormField
           control={form.control}
           name="content"
@@ -155,9 +201,10 @@ const CreateBBSPage = () => {
             </FormItem>
           )}
         />
+
         <div className="flex justify-end">
-          <Button type="submit" className="bg-sky-500 hover:bg-blue-500">
-            Create
+          <Button type="submit" className="bg-sky-500 hover:bg-blue-500" disabled={isSubmitting}>
+            {isSubmitting ? "Posting..." : "Create"}
           </Button>
         </div>
       </form>

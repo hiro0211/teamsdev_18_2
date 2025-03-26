@@ -72,3 +72,16 @@ export const signUpUser = async (data: SignUpSchema) => {
     return { success: false, message: `エラーが発生しました。${error}` };
   }
 };
+
+export const isAuthenticated = async (): Promise<boolean> => {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return false;
+  }
+
+  return true;
+};
