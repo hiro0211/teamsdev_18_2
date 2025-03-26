@@ -6,7 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Pagination from "./components/ui/paginations/Pagination";
 import Image from "next/image";
 import Header from "./Header";
-import { fetchPaginatedPosts, PostSearch } from "@/lib/api/posts";
+import { fetchPaginatedPosts, postSearch } from "@/lib/api/posts";
 import { PostType } from "../lib/api/posts";
 import Link from "next/link";
 
@@ -50,15 +50,16 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const indexOfLastPost = currentPage * itemsPerPage;
-  const indexOfFirstPost = indexOfLastPost - itemsPerPage;
-  const currentPosts = isSingleColumn ? posts : posts.slice(indexOfFirstPost, indexOfLastPost);
-
   // 検索処理
   const handleSearch = async () => {
+    // 検索ワードが空ならページを1にリセット
+    if (!searchKeyword.trim()) {
+      setCurrentPage(1);
+    }
     try {
-      const searchResult = await PostSearch(searchKeyword);
-      setPosts(searchResult);
+      const { data, total } = await postSearch(searchKeyword);
+      setPosts(data);
+      setTotalPosts(total);
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);
@@ -85,7 +86,7 @@ export default function Home() {
               onChange={(e) => setSearchKeyword(e.target.value)}
             />
             <div className={`${isSingleColumn ? "absolute right-3 top-1/2 transform -translate-y-1/2" : "ml-3"}`}>
-              <Image src="/search.svg" alt="Search" width={20} height={20} unoptimized className="cursor-pointer" />
+              <Image src="/search.svg" alt="Search" width={20} height={20} unoptimized className="cursor-pointer" onClick={handleSearch}/>
             </div>
           </div>
         </div>
