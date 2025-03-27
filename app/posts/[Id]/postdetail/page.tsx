@@ -10,7 +10,7 @@ import CommentForm from "@/app/components/comments/CommentForm";
 dayjs.extend(relativeTime);
 
 type PostDetailPageProps = {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 };
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
@@ -83,4 +83,3 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
     </>
   );
 }
-

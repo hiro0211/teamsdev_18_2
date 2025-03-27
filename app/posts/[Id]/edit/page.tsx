@@ -2,22 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -70,25 +57,16 @@ const EditBBSPage = () => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 w-full sm:w-3/4 lg:w-1/2 p-4 sm:p-6 mx-auto"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full sm:w-3/4 lg:w-1/2 p-4 sm:p-6 mx-auto">
         <h2 className="text-2xl font-bold text-center sm:hidden">Create Blog</h2>
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-              <FormLabel className="text-xl sm:text-2xl font-bold">
-                Title
-              </FormLabel>
+              <FormLabel className="text-xl sm:text-2xl font-bold">Title</FormLabel>
               <FormControl className="w-full ">
-                <Input
-                  placeholder="タイトルを入力"
-                  className="focus-visible:ring-0 "
-                  {...field}
-                />
+                <Input placeholder="タイトルを入力" className="focus-visible:ring-0 " {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -103,13 +81,7 @@ const EditBBSPage = () => {
                 <Card className="border-dashed border-gray-400 w-full">
                   {image ? (
                     <div>
-                      <Image
-                        src={image}
-                        alt="Preview"
-                        layout="responsive"
-                        width={400}
-                        height={300}
-                      />
+                      <Image src={image} alt="Preview" layout="responsive" width={400} height={300} />
                       <Button onClick={removeImage} type="button">
                         ×
                       </Button>
@@ -123,11 +95,7 @@ const EditBBSPage = () => {
                         strokeWidth="2"
                         viewBox="0 0 24 24"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 19V5m-7 7l7-7 7 7"
-                        ></path>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m-7 7l7-7 7 7"></path>
                       </svg>
                       <label>
                         <Input
@@ -141,9 +109,7 @@ const EditBBSPage = () => {
                           type="button"
                           variant="outline"
                           className="mt-2 rounded-full bg-sky-500 hover:bg-blue-500 text-black mb-4"
-                          onClick={() =>
-                            document.getElementById("fileUpload")?.click()
-                          }
+                          onClick={() => document.getElementById("fileUpload")?.click()}
                         >
                           Upload Image
                         </Button>
@@ -162,9 +128,7 @@ const EditBBSPage = () => {
             name="category"
             render={({ field }) => (
               <FormItem className="flex flex-col items-start">
-                <FormLabel className="text-sm font-semibold">
-                  Category
-                </FormLabel>
+                <FormLabel className="text-sm font-semibold">Category</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-32 text-sm border-gray-300 shadow-sm">
