@@ -9,11 +9,11 @@ import CommentForm from "@/app/components/comments/CommentForm";
 
 dayjs.extend(relativeTime);
 
-type PostDetailPageProps = {
+type postDetailPageProps = {
   params: Promise<{ id: string }>;
 };
 
-export default async function PostDetailPage({ params }: PostDetailPageProps) {
+export default async function PostDetailPage({ params }: postDetailPageProps) {
   const { id } = await params;
   const postId = Number(id);
 
