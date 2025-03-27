@@ -26,7 +26,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { isAuthenticated } from "@/lib/api/auth";
-import { editFormSchema } from "@/lib/editFormSchema";
+import { editFormSchema } from "@/lib/posts/editFormSchema";
 
 const EditBBSPage = () => {
   const router = useRouter();
