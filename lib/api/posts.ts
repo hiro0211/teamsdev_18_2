@@ -117,3 +117,37 @@ export const uploadImageToStorage = async (file: File, bucketName: string = "pos
 
   return supabase.storage.from(bucketName).getPublicUrl(data.path).data.publicUrl;
 };
+
+export const postSearch = async (searchKeyword: string) => {
+  const page = 1;
+  const limit = 9;
+  const start = (page - 1) * limit;
+  const end = start + limit - 1;
+
+  if (!searchKeyword.trim()) {
+    return await fetchPaginatedPosts(page, limit);
+  }
+
+  const { data, count, error } = await supabase
+    .from("posts")
+    .select(`*, users(name), categories(name)`, { count: "exact" })
+    .ilike("title", `%${searchKeyword}%`)
+    .order("updated_at", { ascending: false })
+    .range(start, end);
+
+  if (error) {
+    throw new Error("記事データの取得に失敗しました: " + error.message);
+  }
+
+  // 取得データを map して、users.name を user_name に、categories.name を category_name に入れる
+  const typedData: PostType[] = (data ?? []).map((post) => ({
+    ...post,
+    user_name: post.users?.name ?? "",
+    category_name: post.categories?.name ?? "",
+  }));
+
+  return {
+    data: typedData,
+    total: count ?? 0,
+  };
+}

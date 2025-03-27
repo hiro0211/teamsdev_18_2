@@ -6,7 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Pagination from "./components/ui/paginations/Pagination";
 import Image from "next/image";
 import Header from "./Header";
-import { fetchPaginatedPosts } from "@/lib/api/posts";
+import { fetchPaginatedPosts, postSearch } from "@/lib/api/posts";
 import { PostType } from "../lib/api/posts";
 import Link from "next/link";
 
@@ -18,6 +18,7 @@ export default function Home() {
   const itemsPerPage = 9;
   const [currentPage, setCurrentPage] = useState(1);
   const [isSingleColumn, setIsSingleColumn] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState(""); 
 
   // ページが変わるたびに記事を再取得
   useEffect(() => {
@@ -49,6 +50,25 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 検索処理
+  const handleSearch = async () => {
+    // 検索ワードが空ならページを1にリセット
+    if (!searchKeyword.trim()) {
+      setCurrentPage(1);
+    }
+    try {
+      const { data, total } = await postSearch(searchKeyword);
+      setPosts(data);
+      setTotalPosts(total);
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("予期しないエラーが発生しました");
+      }
+    }
+  }
+
   return (
     <div className="flex flex-col bg-white w-full min-h-screen overflow-x-hidden">
       <Header />
@@ -62,9 +82,11 @@ export default function Home() {
               className={`w-full px-4 py-2 bg-gray-300 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                 isSingleColumn ? "pr-10" : ""
               }`}
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
             />
             <div className={`${isSingleColumn ? "absolute right-3 top-1/2 transform -translate-y-1/2" : "ml-3"}`}>
-              <Image src="/search.svg" alt="Search" width={20} height={20} unoptimized className="cursor-pointer" />
+              <Image src="/search.svg" alt="Search" width={20} height={20} unoptimized className="cursor-pointer" onClick={handleSearch}/>
             </div>
           </div>
         </div>
