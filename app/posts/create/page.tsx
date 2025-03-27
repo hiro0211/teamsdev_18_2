@@ -13,12 +13,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { isAuthenticated } from "@/lib/api/auth";
-import { formSchema } from "@/lib/posts/createFormSchema";
+import { createFormSchema } from "@/lib/posts/createFormSchema";
 
 const CreateBBSPage = () => {
   const router = useRouter();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof createFormSchema>>({
+    resolver: zodResolver(createFormSchema),
     defaultValues: {
       title: "",
       images: [],
