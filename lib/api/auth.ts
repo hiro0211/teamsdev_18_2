@@ -85,3 +85,12 @@ export const isAuthenticated = async (): Promise<boolean> => {
 
   return true;
 };
+
+export const logout = async (): Promise<void> => {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error("ログアウトエラー:", error.message);
+    throw new Error(error.message);
+  }
+};
