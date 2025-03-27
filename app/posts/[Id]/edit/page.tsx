@@ -8,51 +8,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-// import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { isAuthenticated } from "@/lib/api/auth";
-
-export const formSchema = z.object({
-  title: z.string().min(2, { message: "タイトルは2文字以上で入力してください。" }),
-  images: z.object({ url: z.string() }).array(),
-  category: z.enum(["value"], { message: "カテゴリーを選択してください。" }),
-  content: z
-    .string()
-    .min(10, { message: "本文は10文字以上で入力してください。" })
-    .max(1000, { message: "本文は1000文字以内で入力してください。" }),
-});
-
-// type PostData={
-//     title: string;
-//     images: { url: string }[];
-//     category: "value";
-//     content: string;
-// };
-
-//記事データを取得する関数※仮のAPI
-// const fetchPostData =async(bbsId:string):Promise<PostData>=>{
-//     return new Promise(resolve=>{
-//         setTimeout(()=>{
-//             resolve({
-//                 title: "サンプル記事のタイトル",
-//                 images: [{ url: "/sample-image.jpg" }],
-//                 category: "value",
-//                 content: "サンプル記事の本文。",
-//             })
-//         },1000)
-//     })
-// }
+import { editFormSchema } from "@/lib/posts/editFormSchema";
 
 const EditBBSPage = () => {
   const router = useRouter();
-  // const {bbsId}=useParams();
   const [image, setImage] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof editFormSchema>>({
+    resolver: zodResolver(editFormSchema),
     defaultValues: {
       title: "",
       images: [],
@@ -72,22 +40,10 @@ const EditBBSPage = () => {
     checkAuth();
   }, [router]);
 
-  // useEffect(()=>{
-  //     if(!bbsId)return;
-
-  //     fetchPostData(bbsId as string)
-  //     .then((data:PostData)=>{
-  //         form.reset(data as z.infer<typeof formSchema>);
-  //         if(data.images.length>0){
-  //             setImage(data.images[0].url);
-  //         }
-  //     });
-  // },[bbsId,form]);
-
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event?.target.files?.[0];
     if (file) {
-      setImage(URL.createObjectURL(file)); //画像をプレビュー
+      setImage(URL.createObjectURL(file)); // 画像をプレビュー
     }
   };
 

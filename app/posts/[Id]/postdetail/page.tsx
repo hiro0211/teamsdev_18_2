@@ -9,23 +9,16 @@ import CommentForm from "@/app/components/comments/CommentForm";
 
 dayjs.extend(relativeTime);
 
-type PageProps = {
-  params: {
-    Id: string;
-  };
+type postDetailPageProps = {
+  params: Promise<{ id: string }>;
 };
 
-export default async function PostDetailPage({ params }: PageProps) {
-  // params を await してからプロパティにアクセスする
-  const awaitedParams = await params;
-  const { Id } = awaitedParams;
-  const postId = Number(Id);
+export default async function PostDetailPage({ params }: postDetailPageProps) {
+  const { id } = await params;
+  const postId = Number(id);
 
-  // 記事詳細を取得
-  const postDetail = await getPostDetail(Id);
-
-  // コメントを取得
-  const comments = await getComments(Id);
+  const postDetail = await getPostDetail(id);
+  const comments = await getComments(id);
 
   return (
     <>

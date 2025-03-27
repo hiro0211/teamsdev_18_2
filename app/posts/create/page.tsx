@@ -14,21 +14,12 @@ import { z } from "zod";
 import { createPost, uploadImageToStorage } from "@/lib/api/posts";
 import { useRouter } from "next/navigation";
 import { isAuthenticated } from "@/lib/api/auth";
-
-export const formSchema = z.object({
-  title: z.string().min(2, { message: "タイトルは2文字以上で入力してください。" }),
-  images: z.object({ url: z.string() }).array(),
-  category: z.enum(["value"], { message: "カテゴリーを選択してください。" }),
-  content: z
-    .string()
-    .min(10, { message: "本文は10文字以上で入力してください。" })
-    .max(1000, { message: "本文は1000文字以内で入力してください。" }),
-});
+import { createFormSchema } from "@/lib/posts/createFormSchema";
 
 const CreateBBSPage = () => {
   const router = useRouter();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof createFormSchema>>({
+    resolver: zodResolver(createFormSchema),
     defaultValues: {
       title: "",
       images: [],
