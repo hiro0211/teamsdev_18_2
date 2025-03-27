@@ -14,7 +14,7 @@ type PostDetailPageProps = {
 };
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
-  const { id } = (await params) ?? {};
+  const { id } = await params;
   const postId = Number(id);
 
   const postDetail = await getPostDetail(id);
